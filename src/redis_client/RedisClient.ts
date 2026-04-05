@@ -1,15 +1,16 @@
 import Redis from "ioredis";
 
-const redis = new Redis();
+const redis = new Redis();  // TODO: Сделать класс и передавать объект в конструктор
 
-function setOnlineUser(userId: number) {
-    redis.set(`online:${userId}`, "true", "EX", 60)
+export async function setOnlineUser(userId: number) {
+    await redis.set(`online:${userId}`, "true", "EX", 60)
 }
 
-function expireOnlineStatusUser(userId: number) {
-    redis.expire(`online:${userId}`, 60)
+export async function expireOnlineStatusUser(userId: number) {
+    await redis.expire(`online:${userId}`, 60)
 }
 
-function disconnectUser(userId: number) {
-    redis.del(`online:${userId}`)
+export async function disconnectUser(userId: number) {
+    await redis.del(`online:${userId}`)
+    await redis.set(`last_seen:${userId}`, Date.now().toString())
 }
