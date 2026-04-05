@@ -1,14 +1,25 @@
 import {disconnectUser, expireOnlineStatusUser, setOnlineUser} from "../redis/RedisClient";
 import {WebSocketServer} from "ws";
+import {clearInterval} from "node:timers";
 
 const wss = new WebSocketServer({port: 8080})
 
 wss.on('connection', async (ws, request) => {
     const userId = request.headers['x-user-id']
     if (!userId || Array.isArray(userId)) {
-        ws.close()
+        ws.terminate()
         return
     }
+
+    let isAlive = true
+    const interval = setInterval(() => {
+        if (!isAlive) {
+            ws.terminate()
+            return
+        }
+        isAlive = false
+        ws.ping()
+    }, 60_000)
 
     try {
         await setOnlineUser(userId)
@@ -17,6 +28,7 @@ wss.on('connection', async (ws, request) => {
     }
 
     ws.on('close', async () => {
+        clearInterval(interval)
         try {
             await disconnectUser(userId)
         } catch (error) {
@@ -25,6 +37,7 @@ wss.on('connection', async (ws, request) => {
     })
 
     ws.on('pong', async () => {
+        isAlive = true
         try {
             await expireOnlineStatusUser(userId)
         } catch (error) {
