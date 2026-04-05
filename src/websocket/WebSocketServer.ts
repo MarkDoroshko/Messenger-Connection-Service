@@ -19,7 +19,7 @@ wss.on('connection', async (ws, request) => {
         }
         isAlive = false
         ws.ping()
-    }, 60_000)
+    }, 30_000)
 
     try {
         await setOnlineUser(userId)

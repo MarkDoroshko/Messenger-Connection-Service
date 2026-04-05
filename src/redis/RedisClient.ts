@@ -1,6 +1,9 @@
 import Redis from "ioredis";
 
-const redis = new Redis();  // TODO: Сделать класс и передавать объект в конструктор
+const redis = new Redis({
+    host: process.env.REDIS_HOST ?? 'localhost',
+    port: Number(process.env.REDIS_PORT ?? 6379),
+})
 
 export async function setOnlineUser(userId: string) {
     await redis.set(`online:${userId}`, "true", "EX", 60)
