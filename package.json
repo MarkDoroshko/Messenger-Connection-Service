@@ -8,11 +8,13 @@
     "dev": "ts-node-dev ./src/index.ts"
   },
   "dependencies": {
+    "amqplib": "^0.10.4",
     "express": "^5.2.1",
     "ioredis": "^5.10.1",
     "ws": "^8.20.0"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.5",
     "@types/express": "^5.0.6",
     "@types/node": "^25.5.2",
     "@types/ws": "^8.18.1",

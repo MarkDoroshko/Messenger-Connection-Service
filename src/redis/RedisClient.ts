@@ -5,8 +5,8 @@ const redis = new Redis({
     port: Number(process.env.REDIS_PORT ?? 6379),
 })
 
-export async function setOnlineUser(userId: string) {
-    await redis.set(`online:${userId}`, "true", "EX", 60)
+export async function setOnlineUser(userId: string, instanceId: string) {
+    await redis.set(`online:${userId}`, instanceId, "EX", 60)
 }
 
 export async function expireOnlineStatusUser(userId: string) {
@@ -15,5 +15,5 @@ export async function expireOnlineStatusUser(userId: string) {
 
 export async function disconnectUser(userId: string) {
     await redis.del(`online:${userId}`)
-    await redis.set(`last_seen:${userId}`, Date.now().toString())
+    await redis.set(`last_seen:${userId}`, new Date().toISOString())
 }
